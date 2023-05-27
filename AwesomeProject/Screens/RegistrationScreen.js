@@ -15,16 +15,18 @@ import {
 export default function RegistrationScreen() {
     const [isShowKeyboard, setIsShowKeyboard] = useState(false)
     const [hidePassword, setHidePassword] = useState(true)
+    const [isOnFocusInput, setIsOnFocusInput] = useState('')
 
 
-    const onFocusInput = () => {
+    const onFocusInput = (inputValue) => {
         setIsShowKeyboard(true)
-
+        setIsOnFocusInput(inputValue)
     }
 
     const onCloseKeyboard = () => {
         setIsShowKeyboard(false)
         Keyboard.dismiss()
+        setIsOnFocusInput('')
     }  
     
     const onShowPassword = () => {
@@ -53,9 +55,9 @@ export default function RegistrationScreen() {
                         <Text style={styles.title} >Реєстрація</Text> 
                         <View style={styles.form}>
                             <View style={styles.inputBox}>
-                                <TextInput  style={styles.input} placeholder='Логін' onFocus={onFocusInput} />
-                                <TextInput style={styles.input} placeholder='Адреса електронної пошти' onFocus={onFocusInput}/>
-                                <TextInput style={styles.input} placeholder='Пароль' secureTextEntry={hidePassword} onFocus={onFocusInput} />
+                                <TextInput  style={isOnFocusInput === 'login' ? styles.inputActive : styles.input} placeholder='Логін' onFocus={() => onFocusInput('login')} />
+                                <TextInput style={isOnFocusInput === 'email' ? styles.inputActive : styles.input} placeholder='Адреса електронної пошти' onFocus={() => onFocusInput('email')}/>
+                                <TextInput style={isOnFocusInput === 'password' ? styles.inputActive : styles.input} placeholder='Пароль' secureTextEntry={hidePassword} onFocus={() => onFocusInput('password')} />
                                 <TouchableOpacity
                                 activeOpacity={0.7}
                                 onPress={onShowPassword}
@@ -152,7 +154,17 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#BDBDBD',
         backgroundColor: '#F6F6F6',
-        gap: 16,
+    },
+    inputActive: {
+        borderWidth: 1,
+        borderColor: '#FF6C00',
+        height: 50,
+        width: 343,
+        borderRadius: 8,
+        padding: 16,
+        fontSize: 16,
+        color: '#212121',
+        backgroundColor: '#F6F6F6',
     },
     showPasswordButton: {
         position: 'absolute',
