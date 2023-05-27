@@ -21,6 +21,7 @@ export default function LoginScreen() {
     const onFocusInput = (inputValue) => {
         setIsShowKeyboard(true)
         setIsOnFocusInput(inputValue)
+        console.log(inputValue)
     }
 
     const onBlurInput = () => {
@@ -46,8 +47,8 @@ export default function LoginScreen() {
                         style={styles.background}
                         source={require('../assets/images/bg.jpg')}></ImageBackground>
                     <KeyboardAvoidingView
-                        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                        keyboardVerticalOffset={Platform.OS === 'android' ? -40 : -40}
+                        // behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                        // keyboardVerticalOffset={Platform.OS === 'android' ? -20 : -20}
                         onSubmitEditing={onCloseKeyboard}
                         style={Platform.OS === 'ios' ? { ...styles.loginContainer, bottom: isShowKeyboard ? 80 : 0 } : { ...styles.loginContainer, bottom: isShowKeyboard ? 0 : 0 }} >
                         <Text style={styles.title} >Увійти</Text> 
