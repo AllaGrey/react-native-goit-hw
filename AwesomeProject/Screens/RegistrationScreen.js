@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
     StyleSheet,
     Text,
@@ -12,7 +12,7 @@ import {
     Keyboard
 } from 'react-native';
 
-export default function RegistrationScreen() {
+export default function RegistrationScreen({ navigation }) {
     const [isShowKeyboard, setIsShowKeyboard] = useState(false)
     const [hidePassword, setHidePassword] = useState(true)
     const [isOnFocusInput, setIsOnFocusInput] = useState('')
@@ -67,13 +67,15 @@ export default function RegistrationScreen() {
                             </View>
                             <TouchableOpacity
                                 activeOpacity={0.5}
-                                onPress={onCloseKeyboard}
+                                onPress={()=> navigation.navigate('Home')}
                                 style={styles.button}>
                                 <Text style={styles.buttonText}>Зареєструватися</Text>
                             </TouchableOpacity>
                         </View>
                 </KeyboardAvoidingView>
-                <Text style={styles.link}>Вже є акаунт? Увійти</Text>
+                <TouchableOpacity onPress={()=> navigation.navigate('Login')}>
+                    <Text style={styles.link}>Вже є акаунт? Увійти</Text>
+                </TouchableOpacity>
             </View>
         </TouchableWithoutFeedback>
     )

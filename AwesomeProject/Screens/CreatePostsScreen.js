@@ -1,13 +1,13 @@
-import { useState } from 'react';
+// import { useState } from 'react';
 import { View, Text, StyleSheet } from "react-native";
 
 
-export default function PostsScreen({navigation}) {
+export default function CreatePostsScreen({navigation}) {
     
 
     return (
         <View style={styles.container}>
-            <Text>This is PostsScreen Page</Text>
+            <Text>This is CreatePostsScreen Page</Text>
         </View>
     )
 }

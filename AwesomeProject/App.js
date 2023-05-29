@@ -1,14 +1,16 @@
-import React, {useCallback} from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, ImageBackground } from 'react-native';
-import { useFonts } from 'expo-font';
+import { StyleSheet, View } from 'react-native';
+
+import { useCallback } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
-import RegistrationScreen from './Screens/RegistrationScreen';
-import LoginScreen from './Screens/LoginScreen';
+import { useFonts } from 'expo-font';
+
+import { NavigationContainer } from '@react-navigation/native';
+
+import { selectRoute } from './routes/routes';
 
 export default function App() {
 
-  const [fontsLoaded] = useFonts({
+const [fontsLoaded] = useFonts({
     'Roboto-Medium': require('./assets/fonts/Roboto-Medium.ttf'),
     'Roboto-Regular': require('./assets/fonts/Roboto-Regular.ttf'),
 
@@ -24,13 +26,15 @@ export default function App() {
     return null;
   }
 
+  const routing = selectRoute(true)
+
   return (
     <View style={styles.container} onLayout={onLayoutRootView}>
-      {/* <RegistrationScreen /> */}
-      <LoginScreen />
-      <StatusBar style="auto" />
+      <NavigationContainer>
+        {routing}
+      </NavigationContainer>
     </View>
-  );
+    )
 }
 
 const styles = StyleSheet.create({

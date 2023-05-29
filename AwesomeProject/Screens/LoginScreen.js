@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
     StyleSheet,
     Text,
@@ -12,7 +12,7 @@ import {
     Keyboard
 } from 'react-native';
 
-export default function LoginScreen() {
+export default function LoginScreen({ navigation }) {
     const [isShowKeyboard, setIsShowKeyboard] = useState(false)
     const [hidePassword, setHidePassword] = useState(true)
     const [isOnFocusInput, setIsOnFocusInput] = useState('')
@@ -65,13 +65,15 @@ export default function LoginScreen() {
                             </View>
                             <TouchableOpacity
                                 activeOpacity={0.5}
-                                onPress={onCloseKeyboard}
+                                onPress={()=>navigation.navigate('Home')}
                                 style={styles.button}>
                                 <Text style={styles.buttonText}>Увійти</Text>
                             </TouchableOpacity>
                         </View>
                 </KeyboardAvoidingView>
-                <Text style={styles.link}>Немає акаунту? Зареєструватися</Text>
+                <TouchableOpacity onPress={()=>navigation.navigate('Registration')}>
+                    <Text style={styles.link}>Немає акаунту? Зареєструватися</Text>
+                </TouchableOpacity>
             </View>
         </TouchableWithoutFeedback>
     )

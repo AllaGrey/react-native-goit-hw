@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import { View, Text, StyleSheet } from "react-native";
+import PostsScreen from './PostsScreen';
+import { HomeTab } from '../routes/HomeTab';
 
-
-export default function PostsScreen({navigation}) {
+export default function Home() {
     
-
     return (
-        <View style={styles.container}>
-            <Text>This is PostsScreen Page</Text>
-        </View>
+
+            <HomeTab/>
+
+        
     )
 }
 
