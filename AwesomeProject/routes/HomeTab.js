@@ -6,7 +6,7 @@ import { Feather } from '@expo/vector-icons';
 import CreatePostsScreen from '../Screens/CreatePostsScreen';
 import ProfileScreen from '../Screens/ProfileScreen';
 import { TouchableOpacity } from 'react-native';
-import PostsScreen from '../Screens/PostsScreen';
+import {PostsScreen} from '../Screens/PostScreen';
 
 
 

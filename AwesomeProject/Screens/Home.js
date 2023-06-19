@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { View, Text, StyleSheet } from "react-native";
-import PostsScreen from './PostsScreen';
+// import PostsScreen from './PostsScreen';
 import { HomeTab } from '../routes/HomeTab';
 
 export default function Home() {
