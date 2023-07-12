@@ -1,4 +1,7 @@
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { authLogin } from '../redux/auth/authOperations';
+
 import {
     StyleSheet,
     Text,
@@ -12,11 +15,18 @@ import {
     Keyboard
 } from 'react-native';
 
+const initialState = {
+    email: null,
+    password: null,
+}
+
 export default function LoginScreen({ navigation }) {
+    const [user, setUser] = useState(initialState)
     const [isShowKeyboard, setIsShowKeyboard] = useState(false)
     const [hidePassword, setHidePassword] = useState(true)
     const [isOnFocusInput, setIsOnFocusInput] = useState('')
 
+    const dispatch = useDispatch();
 
     const onFocusInput = (inputValue) => {
         setIsShowKeyboard(true)
@@ -32,6 +42,7 @@ export default function LoginScreen({ navigation }) {
     const onCloseKeyboard = () => {
         setIsShowKeyboard(false)
         Keyboard.dismiss()
+        // setUser(initialState)
         
     }  
     
@@ -39,6 +50,10 @@ export default function LoginScreen({ navigation }) {
         setHidePassword(hidePassword => !hidePassword)
     }
 
+    const onSubmitLogin = () => {
+        dispatch(authLogin(user))
+        navigation.navigate('Home')
+    }
 
     return (
         <TouchableWithoutFeedback onPress={onCloseKeyboard}>
@@ -54,18 +69,36 @@ export default function LoginScreen({ navigation }) {
                         <Text style={styles.title} >Увійти</Text> 
                         <View style={styles.form}>
                             <View style={styles.inputBox}>
-                                <TextInput style={isOnFocusInput === 'email' ? styles.inputActive : styles.input} placeholder='Адреса електронної пошти' onFocus={() => onFocusInput('email')} onBlur={onBlurInput}/>
-                                <TextInput style={isOnFocusInput === 'password' ? styles.inputActive : styles.input} placeholder='Пароль' onFocus={() => onFocusInput('password')} secureTextEntry={hidePassword}/>
+                            <TextInput
+                                style={isOnFocusInput === 'email' ? styles.inputActive : styles.input}
+                                placeholder='Адреса електронної пошти'
+                                onFocus={() => onFocusInput('email')}
+                                onBlur={onBlurInput} 
+                                value={user.email}
+                                onChangeText={(value)=> setUser((prev) => ({...prev, email: value}))}
+                                />
+                            <TextInput
+                                style={isOnFocusInput === 'password' ? styles.inputActive : styles.input}
+                                placeholder='Пароль'
+                                onFocus={() => onFocusInput('password')}
+                                secureTextEntry={hidePassword} 
+                                onBlur={onBlurInput}
+                                value={user.password}
+                                onChangeText={(value) => setUser((prev) => ({...prev, password: value}))}
+                                />
                                 <TouchableOpacity
                                 activeOpacity={0.7}
                                 onPress={onShowPassword}
-                                    style={styles.showPasswordButton}>
-                                <Text style={styles.showPasswordText}>{hidePassword ? 'Показати' : 'Приховати'}</Text>
+                                style={styles.showPasswordButton}>
+                                <Text
+                                    style={styles.showPasswordText}>{hidePassword ? 'Показати' : 'Приховати'}
+
+                                </Text>
                                 </TouchableOpacity>
                             </View>
                             <TouchableOpacity
                                 activeOpacity={0.5}
-                                onPress={()=>navigation.navigate('Home')}
+                                onPress={onSubmitLogin}
                                 style={styles.button}>
                                 <Text style={styles.buttonText}>Увійти</Text>
                             </TouchableOpacity>

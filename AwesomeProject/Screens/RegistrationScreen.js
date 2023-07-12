@@ -12,7 +12,20 @@ import {
     Keyboard
 } from 'react-native';
 
+import { authRegister } from '../redux/auth/authOperations';
+import { useDispatch } from 'react-redux';
+
+const initialState = {
+    name: '',
+    email: '',
+    password: '',
+}
+
 export default function RegistrationScreen({ navigation }) {
+    const [user, setUser] = useState(initialState)
+
+    const dispatch = useDispatch()
+
     const [isShowKeyboard, setIsShowKeyboard] = useState(false)
     const [hidePassword, setHidePassword] = useState(true)
     const [isOnFocusInput, setIsOnFocusInput] = useState('')
@@ -27,12 +40,19 @@ export default function RegistrationScreen({ navigation }) {
         setIsShowKeyboard(false)
         Keyboard.dismiss()
         setIsOnFocusInput('')
+        
+        // setUser(initialState)
     }  
     
     const onShowPassword = () => {
         setHidePassword(hidePassword => !hidePassword)
     }
 
+    const onSubmitRegister = () => {
+        console.log(user);
+        dispatch(authRegister(user))
+        navigation.navigate('Home')
+    }
 
     return (
         <TouchableWithoutFeedback onPress={onCloseKeyboard}>
@@ -55,19 +75,36 @@ export default function RegistrationScreen({ navigation }) {
                         <Text style={styles.title} >Реєстрація</Text> 
                         <View style={styles.form}>
                             <View style={styles.inputBox}>
-                                <TextInput  style={isOnFocusInput === 'login' ? styles.inputActive : styles.input} placeholder='Логін' onFocus={() => onFocusInput('login')} />
-                                <TextInput style={isOnFocusInput === 'email' ? styles.inputActive : styles.input} placeholder='Адреса електронної пошти' onFocus={() => onFocusInput('email')}/>
-                                <TextInput style={isOnFocusInput === 'password' ? styles.inputActive : styles.input} placeholder='Пароль' secureTextEntry={hidePassword} onFocus={() => onFocusInput('password')} />
-                                <TouchableOpacity
-                                activeOpacity={0.7}
-                                onPress={onShowPassword}
-                                    style={styles.showPasswordButton}>
-                                <Text style={styles.showPasswordText}>{hidePassword ? 'Показати' : 'Приховати'}</Text>
-                                </TouchableOpacity>
+                                <TextInput
+                                    style={isOnFocusInput === 'login' ? styles.inputActive : styles.input}
+                                    placeholder='Логін'
+                                    onFocus={() => onFocusInput('login')}
+                                    value={user.name} 
+                                    onChangeText={(value) => setUser((prev) => ({...prev, name: value}))}
+                                    />
+                                <TextInput
+                                    style={isOnFocusInput === 'email' ? styles.inputActive : styles.input}
+                                    placeholder='Адреса електронної пошти'
+                                    onFocus={() => onFocusInput('email')}
+                                    value={user.email} 
+                                    onChangeText={(value) => setUser((prev) => ({...prev, email: value}))}/>
+                                <TextInput
+                                    style={isOnFocusInput === 'password' ? styles.inputActive : styles.input}
+                                    placeholder='Пароль'
+                                    secureTextEntry={hidePassword}
+                                    onFocus={() => onFocusInput('password')}
+                                    value={user.password} 
+                                    onChangeText={(value) => setUser((prev) => ({...prev, password: value}))}/>
+                                    <TouchableOpacity
+                                        activeOpacity={0.7}
+                                        onPress={onShowPassword}
+                                        style={styles.showPasswordButton}>
+                                        <Text style={styles.showPasswordText}>{hidePassword ? 'Показати' : 'Приховати'}</Text>
+                                    </TouchableOpacity>
                             </View>
                             <TouchableOpacity
                                 activeOpacity={0.5}
-                                onPress={()=> navigation.navigate('Home')}
+                                onPress={onSubmitRegister}
                                 style={styles.button}>
                                 <Text style={styles.buttonText}>Зареєструватися</Text>
                             </TouchableOpacity>

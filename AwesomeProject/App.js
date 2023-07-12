@@ -1,12 +1,14 @@
+// import {registerRootComponent } from 'expo';
 import { StyleSheet, View } from 'react-native';
 
 import { useCallback } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from 'expo-font';
 
-import { NavigationContainer } from '@react-navigation/native';
+import { store } from './redux/store'
+import { Provider } from 'react-redux'
 
-import { selectRoute } from './routes/routes';
+import { Main } from './components/Main';
 
 export default function App() {
 
@@ -26,14 +28,13 @@ const [fontsLoaded] = useFonts({
     return null;
   }
 
-  const routing = selectRoute(true)
 
   return (
-    <View style={styles.container} onLayout={onLayoutRootView}>
-      <NavigationContainer>
-        {routing}
-      </NavigationContainer>
-    </View>
+    <Provider store={store}>
+      <View style={styles.container} onLayout={onLayoutRootView}>
+        <Main/>
+      </View>
+    </Provider>
     )
 }
 
@@ -44,3 +45,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
+
+// registerRootComponent(App);

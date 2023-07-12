@@ -6,9 +6,8 @@ import Home from '../Screens/Home';
 
   const AuthStack = createNativeStackNavigator();
 
-export const selectRoute = (isLogIn) => {
+export const selectRoute = () => {
 
- 
     return (
           <AuthStack.Navigator>
             <AuthStack.Screen name='Registration' component={RegistrationScreen} options={{headerShown: false}}/>
