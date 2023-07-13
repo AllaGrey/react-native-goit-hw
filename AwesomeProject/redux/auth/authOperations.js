@@ -5,7 +5,7 @@ import { authSlice } from "./authReducer";
 export const authRegister =  ({name, email, password}) => async (dispatch, getState) => {
     try {
         await db.default.auth().createUserWithEmailAndPassword(email, password)
-        console.log(user, 'this is user');
+
         const user = await db.default.auth().currentUser
 
         await user.updateProfile({
@@ -25,9 +25,11 @@ export const authRegister =  ({name, email, password}) => async (dispatch, getSt
     }
 export const authLogin = ({ email, password }) => async (dispatch, getState) => { 
     try {
-        const { user } = await db.default.auth().signInWithEmailAndPassword(email, password);
-        dispatch(authSlice.actions.updateUserStatus({userId: user.uid}))
-        console.log(user, 'user is logged in');
+        await db.default.auth().signInWithEmailAndPassword(email, password);
+
+        const {displayName, uid} = await db.default.auth().currentUser
+
+        dispatch(authSlice.actions.updateUserStatus({userId: uid, nickname: displayName}))
 
     } catch (error) {
         const errorCode = error.code;
@@ -36,4 +38,33 @@ export const authLogin = ({ email, password }) => async (dispatch, getState) => 
         console.log(errorMessage);
     }
 }
-const authLogout = () => async (dispatch, getState) => { }
+export const authLoginStatusChange = () => async (dispatch, getState) => { 
+    try {
+        
+        await db.default.auth().onAuthStateChanged((user) => {
+
+            if (user) {
+                dispatch(authSlice.actions.updateUserStatus({ userId: user.uid, nickname: user.displayName }))
+                dispatch(authSlice.actions.updateLoginStatus({ loginStatus: true }))
+            }
+        });
+
+    } catch (error) {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode);
+        console.log(errorMessage);
+    }
+}
+
+export const authLogout = () => async (dispatch, getState) => {
+    try {
+        await db.default.auth().signOut()
+        dispatch(authSlice.actions.resetUserStatus())
+    } catch (error) {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode);
+        console.log(errorMessage);
+    }
+}

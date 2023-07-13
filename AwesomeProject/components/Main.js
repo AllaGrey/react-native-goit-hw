@@ -1,24 +1,25 @@
 import React from 'react';
-import { useState } from 'react';
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { NavigationContainer } from '@react-navigation/native';
+import { authLoginStatusChange } from '../redux/auth/authOperations';
 
 import { selectRoute } from '../routes/routes';
-import db from '../firebase/config';
 
 
 export const Main = () => {
-    const [loggedUser, setLoggedUser] = useState(null)
-    
-    db.default.auth().onAuthStateChanged((user)=> setLoggedUser(user))
-    // console.log(isLogged, 'this is islogged');
+    const {loginStatus} = useSelector(state => state.auth)
 
-    const routing = selectRoute(false)
-    console.log(routing, 'routing');
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        dispatch(authLoginStatusChange())
+    }, [loginStatus])
+
+    const routing = selectRoute(loginStatus)
 
     return(
         <NavigationContainer>
         {routing}
         </NavigationContainer>)
 }
-
-// export default Main;

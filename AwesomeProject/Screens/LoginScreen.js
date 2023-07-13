@@ -31,7 +31,6 @@ export default function LoginScreen({ navigation }) {
     const onFocusInput = (inputValue) => {
         setIsShowKeyboard(true)
         setIsOnFocusInput(inputValue)
-        console.log(inputValue)
     }
 
     const onBlurInput = () => {
@@ -52,7 +51,7 @@ export default function LoginScreen({ navigation }) {
 
     const onSubmitLogin = () => {
         dispatch(authLogin(user))
-        navigation.navigate('Home')
+        // navigation.navigate('Home')
     }
 
     return (

@@ -3,11 +3,15 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import RegistrationScreen from '../Screens/RegistrationScreen';
 import LoginScreen from '../Screens/LoginScreen';
 import Home from '../Screens/Home';
+import { HomeTab } from './HomeTab';
 
   const AuthStack = createNativeStackNavigator();
 
-export const selectRoute = () => {
+export const selectRoute = (routing) => {
 
+  if (routing) {
+    return <HomeTab/>
+  }
     return (
           <AuthStack.Navigator>
             <AuthStack.Screen name='Registration' component={RegistrationScreen} options={{headerShown: false}}/>

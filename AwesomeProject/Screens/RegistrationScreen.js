@@ -49,9 +49,8 @@ export default function RegistrationScreen({ navigation }) {
     }
 
     const onSubmitRegister = () => {
-        console.log(user);
         dispatch(authRegister(user))
-        navigation.navigate('Home')
+        // navigation.navigate('Home')
     }
 
     return (
