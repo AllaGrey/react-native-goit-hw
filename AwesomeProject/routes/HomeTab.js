@@ -63,7 +63,6 @@ export const HomeTab = () => {
                         onPress={()=>navigation.navigate('Create')}>
                         <Feather name="plus" size={size} color="#FFFFFF" />
                     </TouchableOpacity>
-               
             
             }} />
             <MainTab.Screen name='Profile' component={ProfileScreen} options={{

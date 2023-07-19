@@ -5,14 +5,21 @@
 // import { getAnalytics } from "firebase/analytics";
 // import { getStorage } from "firebase/storage";
 
-import * as firebase from 'firebase/compat/app';
+import firebase  from 'firebase/compat/app';
 import 'firebase/compat/auth'
+import 'firebase/compat/database'
+import 'firebase/compat/storage'
+import 'firebase/compat/firestore'
+
+
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+
+
 var firebaseConfig = {
     apiKey: "AIzaSyD7t_BsymH1sS-SHMOqoD9pPqYEXL85PBY",
     authDomain: "react-native-social-netw-2eb91.firebaseapp.com",
@@ -23,9 +30,23 @@ var firebaseConfig = {
     measurementId: "G-R1Y3LNNV84"
 };
 
+
+// const firebaseConfig = {
+//     apiKey: "AIzaSyDcsutqJzRX42UTFwXC0LJ7jWNgyHDl3-I",
+//     authDomain: "networt-2d4c3.firebaseapp.com",
+//     projectId: "networt-2d4c3",
+//     storageBucket: "networt-2d4c3.appspot.com",
+//     messagingSenderId: "714409525245",
+//     appId: "1:714409525245:web:47b5c0df6dc0eb40b42394",
+//     measurementId: "G-PYRTD4LE74"
+// };
+
+
+
 // Initialize Firebase
 // export const app = initializeApp(firebaseConfig);
-firebase.default.initializeApp(firebaseConfig);
+// firebase.default.initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig)
 
 export default firebase;
 // export const analytics = getAnalytics(app);

@@ -8,6 +8,10 @@ import * as Location from 'expo-location';
 
 import { MaterialIcons, Feather } from '@expo/vector-icons';
 
+import db from '../firebase/config'
+import { uid } from 'uid';
+import { useSelector } from 'react-redux';
+
 export default function CreatePostsScreen({navigation}) {
     const [hasPermission, setHasPermission] = useState(null);
     const [cameraRef, setCameraRef] = useState(null);
@@ -19,6 +23,8 @@ export default function CreatePostsScreen({navigation}) {
     const [transformedCoords, setTransformedCoords] = useState(null);
     const [postName, setPostName] = useState('');
     const [sendValidation, setSendValidation] = useState(false)
+
+    const {userId} = useSelector(state => state.auth)
 
     useEffect(() => {
     (async () => {
@@ -81,7 +87,28 @@ export default function CreatePostsScreen({navigation}) {
             const { uri } = await cameraRef.takePictureAsync();
             await MediaLibrary.createAssetAsync(uri);
             setPhoto(uri);
-        }      
+        } 
+        
+        
+    }
+
+    const uploadPostToServer = async () => {
+        const dbPhoto = await uploadPhotoToServer()
+        const postId = uid(6)
+        const dbPost = await db.firestore().collection('posts').add({postId, dbPhoto, location, transformedCoords, postName, userId})
+        console.log(dbPost, 'this is dbPost');
+    }
+
+    const uploadPhotoToServer = async () => {
+        // console.log(photo);
+        const resp = await fetch(`${photo}`)
+        const file = await resp.blob()
+        const fileId = uid(10)
+
+        await db.storage().ref(`postImage/${fileId}`).put(file)
+        const dbPhoto = await db.storage().ref('postImage').child(fileId).getDownloadURL()
+
+        return dbPhoto
     }
 
     const onChangePostName = (inputValue) => {
@@ -90,9 +117,11 @@ export default function CreatePostsScreen({navigation}) {
 
     const onSend = () => {
 
-        if(location) navigation.navigate('DefaultPosts', { photo, postName, location, transformedCoords });
+        if (location) navigation.navigate('DefaultPosts', { photo, postName, location, transformedCoords });
+        uploadPostToServer();
         setPhoto('');
         setPostName('');
+        
     }
 
     const onDeletePhoto = () => {
@@ -124,7 +153,11 @@ export default function CreatePostsScreen({navigation}) {
                     </TouchableOpacity>                
             </Camera>
             </View>
-            <View style={styles.cameraTextContainer} ><Text style={styles.cameraText} >{photo !== '' ? 'Редагувати фото' : 'Завантажте фото'}</Text></View>
+            <View style={styles.cameraTextContainer} >
+                <Text style={styles.cameraText} >
+                    {photo !== '' ? 'Редагувати фото' : 'Завантажте фото'}
+                </Text>
+            </View>
             <View style={styles.inputContainer} >
                 <TextInput style={styles.input} placeholder='Назва...' onChangeText={onChangePostName}  />
                 <View style={styles.locationInputContainer} >

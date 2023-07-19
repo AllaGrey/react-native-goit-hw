@@ -2,19 +2,23 @@
 import db from "../../firebase/config";
 import { authSlice } from "./authReducer";
 
-export const authRegister =  ({name, email, password}) => async (dispatch, getState) => {
+export const authRegister =  ({name, email, password, avatar}) => async (dispatch, getState) => {
     try {
-        await db.default.auth().createUserWithEmailAndPassword(email, password)
+        await db.auth().createUserWithEmailAndPassword(email, password)
 
-        const user = await db.default.auth().currentUser
+        const user = await db.auth().currentUser
+        console.log(avatar, 'avatar');
+        
 
         await user.updateProfile({
             displayName: name,
+            photoURL: avatar,
         })
 
-        const {displayName, uid} = await db.default.auth().currentUser
+        const {displayName, photoURL, uid} = await db.auth().currentUser
 
-        dispatch(authSlice.actions.updateUserStatus({userId: uid, nickname: displayName}))
+        console.log(photoURL);
+        dispatch(authSlice.actions.updateUserStatus({userId: uid, nickname: displayName, photoURL}))
 
     } catch (error) {
         const errorCode = error.code;
@@ -25,11 +29,11 @@ export const authRegister =  ({name, email, password}) => async (dispatch, getSt
     }
 export const authLogin = ({ email, password }) => async (dispatch, getState) => { 
     try {
-        await db.default.auth().signInWithEmailAndPassword(email, password);
+        await db.auth().signInWithEmailAndPassword(email, password);
 
-        const {displayName, uid} = await db.default.auth().currentUser
+        const {displayName, photoURL, uid} = await db.auth().currentUser
 
-        dispatch(authSlice.actions.updateUserStatus({userId: uid, nickname: displayName}))
+        dispatch(authSlice.actions.updateUserStatus({userId: uid, nickname: displayName, photoURL}))
 
     } catch (error) {
         const errorCode = error.code;
@@ -41,11 +45,44 @@ export const authLogin = ({ email, password }) => async (dispatch, getState) => 
 export const authLoginStatusChange = () => async (dispatch, getState) => { 
     try {
         
-        await db.default.auth().onAuthStateChanged((user) => {
-
+        await db.auth().onAuthStateChanged((user) => {
+            console.log(user);
+            
             if (user) {
-                dispatch(authSlice.actions.updateUserStatus({ userId: user.uid, nickname: user.displayName }))
+                const { displayName, photoURL, uid } = user;
                 dispatch(authSlice.actions.updateLoginStatus({ loginStatus: true }))
+                dispatch(authSlice.actions.updateUserStatus({ userId: uid, nickname: displayName, photoURL }))
+                
+            }
+        });
+
+    } catch (error) {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode);
+        console.log(errorMessage);
+    }
+}
+
+export const authUpdateUserAvatar = (avatar) => async (dispatch, getState) => { 
+    try {
+
+        const user = await db.auth().currentUser
+        console.log(avatar, 'avatar');
+        
+
+        await user.updateProfile({
+            photoURL: avatar,
+        })
+        
+        await db.auth().onAuthStateChanged((user) => {
+            console.log(user);
+            
+            if (user) {
+                const { displayName, photoURL, uid } = user;
+                dispatch(authSlice.actions.updateLoginStatus({ loginStatus: true }))
+                dispatch(authSlice.actions.updateUserStatus({ userId: uid, nickname: displayName, photoURL }))
+                
             }
         });
 
@@ -59,7 +96,7 @@ export const authLoginStatusChange = () => async (dispatch, getState) => {
 
 export const authLogout = () => async (dispatch, getState) => {
     try {
-        await db.default.auth().signOut()
+        await db.auth().signOut()
         dispatch(authSlice.actions.resetUserStatus())
     } catch (error) {
         const errorCode = error.code;

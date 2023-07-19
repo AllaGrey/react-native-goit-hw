@@ -27,17 +27,17 @@ const rootReducer = combineReducers({
 // const composeEnhancers = composeWithDevTools({
 //   // Specify here name, actionsDenylist, actionsCreators and other options
 // });
-// const reducer = persistReducer(persistConfig, rootReducer);
+const reducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
     // reducer,
     reducer: rootReducer,
-    // middleware: composeEnhancers(getDefaultMiddleware =>
-    //     getDefaultMiddleware({
-    //         serializableCheck: {
-    //             ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-    //         },
-    //     }))
+    middleware: getDefaultMiddleware =>
+        getDefaultMiddleware({
+            serializableCheck: {
+                ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+            },
+        })
 });
 
-// export const persistor = persistStore(store);
+export const persistor = persistStore(store);

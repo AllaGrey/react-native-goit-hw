@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     StyleSheet,
     Text,
@@ -9,27 +9,52 @@ import {
     Platform,
     KeyboardAvoidingView,
     TouchableWithoutFeedback,
-    Keyboard
+    Keyboard,
+    Image
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 import { authRegister } from '../redux/auth/authOperations';
 import { useDispatch } from 'react-redux';
+
+import db from '../firebase/config'
+import { uid } from 'uid';
+
+const defaultAvatarURL = 'https://firebasestorage.googleapis.com/v0/b/react-native-social-netw-2eb91.appspot.com/o/avatarImage%2Fno-photo-icon-22.jpg?alt=media&token=22799411-430b-4b7d-b4f4-d2ebb9ea9c0a'
 
 const initialState = {
     name: '',
     email: '',
     password: '',
+    avatar: '',
 }
 
-export default function RegistrationScreen({ navigation }) {
-    const [user, setUser] = useState(initialState)
 
-    const dispatch = useDispatch()
+export default function RegistrationScreen({ navigation, route }) {
+    const [user, setUser] = useState(initialState)
 
     const [isShowKeyboard, setIsShowKeyboard] = useState(false)
     const [hidePassword, setHidePassword] = useState(true)
     const [isOnFocusInput, setIsOnFocusInput] = useState('')
+    const [photo, setPhoto] = useState('');
 
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        if(route.params) setPhoto(route.params.photo)
+    }, [route])
+    
+    const uploadPhotoToServer = async () => {
+        
+        const resp = await fetch(`${photo}`)
+        const file = await resp.blob()
+        const fileId = uid(10)
+
+        await db.storage().ref(`avatarImage/${fileId}`).put(file)
+        const dbPhoto = await db.storage().ref('avatarImage').child(fileId).getDownloadURL()
+
+        return dbPhoto
+    }
 
     const onFocusInput = (inputValue) => {
         setIsShowKeyboard(true)
@@ -43,15 +68,26 @@ export default function RegistrationScreen({ navigation }) {
         
         // setUser(initialState)
     }  
-    
+
     const onShowPassword = () => {
         setHidePassword(hidePassword => !hidePassword)
     }
 
-    const onSubmitRegister = () => {
-        dispatch(authRegister(user))
+    const onSubmitRegister = async () => {
+        let dbAvatarURL;
+
+        if (photo) dbAvatarURL = await uploadPhotoToServer()
+        
+        if(!photo) dbAvatarURL = defaultAvatarURL
+        
+        console.log(photo, 'photo');
+        console.log(dbAvatarURL, 'dbAvatar')
+        console.log(user, 'user from register');
+        dispatch(authRegister({ ...user, avatar: dbAvatarURL }))
         // navigation.navigate('Home')
     }
+
+    
 
     return (
         <TouchableWithoutFeedback onPress={onCloseKeyboard}>
@@ -65,10 +101,12 @@ export default function RegistrationScreen({ navigation }) {
                         onSubmitEditing={onCloseKeyboard}
                         style={Platform.OS === 'ios' ? { ...styles.registrationContainer, bottom: isShowKeyboard ? 160 : 0 } : { ...styles.registrationContainer, bottom: isShowKeyboard ? 0 : 0 }} >
                     <View style={styles.imageWrap}>
+                        <Image style={styles.photo} source={photo !== '' ? {uri: photo} : require('../assets/images/no-photo-icon-22.jpg')}/>
                             <TouchableOpacity
                                 activeOpacity={0.7}
-                                style={styles.addPhotoButton}>
-                                <Text style={styles.addPhotoText}>+</Text>
+                                style={photo ? {...styles.addPhotoButton, borderColor: '#BDBDBD'} : {...styles.addPhotoButton, borderColor: '#FF6C00'}}
+                                onPress={()=> navigation.navigate('Camera')}>
+                            <Ionicons style={photo ? styles.removeIcon : styles.addIcon} name="add-outline" size={24} />
                             </TouchableOpacity>
                         </View>
                         <Text style={styles.title} >Реєстрація</Text> 
@@ -149,19 +187,34 @@ const styles = StyleSheet.create({
         backgroundColor: '#F6F6F6',
 
     },
+
+    photo: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 16,
+        position: 'absolute',
+        
+    },
+
     addPhotoButton: {
         position: 'absolute',
-        width: 25,
-        height: 25,
         borderRadius: 50,
-        borderColor: '#FF6C00',
         backgroundColor: '#FFFFFF',
         borderWidth: 1,
         right: -14,
         bottom: 14,
-        padding: 0,
 
     },
+
+    addIcon: {
+        color: '#FF6C00'
+    },
+
+    removeIcon: {
+        color: '#BDBDBD',
+        transform: [{rotate: '45deg'}],
+    },
+
     addPhotoText: {
         top: -4,
         right: -4,
@@ -233,5 +286,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 108,
         fontSize: 16,
         color: '#1B4371',
-    }
+    },
+
+
 })
